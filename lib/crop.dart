@@ -4,7 +4,6 @@ library crop;
 import 'dart:ui' as ui;
 import 'dart:math';
 
-import 'package:collision/collision.dart';
 import 'package:crop/src/matrix_decomposition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
