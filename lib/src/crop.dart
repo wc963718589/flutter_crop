@@ -20,6 +20,7 @@ class Crop extends StatefulWidget {
     this.animationDuration = const Duration(milliseconds: 200),
     this.radius,
     this.scaleLimit,
+    this.disableRotation,
   }) : super(key: key);
 
   /// The widget below this widget in the tree.
@@ -70,6 +71,9 @@ class Crop extends StatefulWidget {
 
   /// Maximum zoom scale
   final double? scaleLimit;
+
+  /// Whether to disable rotation
+  final bool? disableRotation;
 
   @override
   State<StatefulWidget> createState() {
@@ -233,7 +237,7 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
 
     // In the case where lesser than 2 fingers involved in scaling, we ignore
     // the rotation handling.
-    if (details.pointerCount > 1) {
+    if (details.pointerCount > 1 && !(widget.disableRotation ?? false)) {
       // In the first touch, we reset all the values.
       if (_previousPointerCount != details.pointerCount) {
         _previousPointerCount = details.pointerCount;
