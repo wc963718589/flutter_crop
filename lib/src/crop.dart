@@ -19,6 +19,7 @@ class Crop extends StatefulWidget {
     this.onChanged,
     this.animationDuration = const Duration(milliseconds: 200),
     this.radius,
+    this.scaleLimit,
   }) : super(key: key);
 
   /// The widget below this widget in the tree.
@@ -66,6 +67,9 @@ class Crop extends StatefulWidget {
 
   /// Radius of the crop area.
   final Radius? radius;
+
+  /// Maximum zoom scale
+  final double? scaleLimit;
 
   @override
   State<StatefulWidget> createState() {
@@ -220,6 +224,10 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
     widget.controller._offset += details.focalPoint - _previousOffset;
     _previousOffset = details.focalPoint;
     widget.controller._scale = _previousScale * details.scale;
+    if (widget.scaleLimit != null &&
+        widget.controller._scale > widget.scaleLimit!) {
+      widget.controller._scale = widget.scaleLimit!;
+    }
     _startOffset = widget.controller._offset;
     _endOffset = widget.controller._offset;
 
