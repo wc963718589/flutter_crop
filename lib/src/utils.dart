@@ -22,6 +22,3 @@ Size _getSizeToFitByRatio(double imageAspectRatio, double containerWidth,
     adjustedHeight - padding.vertical,
   );
 }
-
-vm.Vector2 _toVector2(Offset offset) => vm.Vector2(offset.dx, offset.dy);
-Offset _toOffset(vm.Vector2 v) => Offset(v.x, v.y);

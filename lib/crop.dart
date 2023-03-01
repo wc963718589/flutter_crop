@@ -7,7 +7,6 @@ import 'dart:math';
 import 'package:crop/src/matrix_decomposition.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:vector_math/vector_math_64.dart' as vm;
 
 export 'src/matrix_decomposition.dart';
 

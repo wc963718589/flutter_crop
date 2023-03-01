@@ -3,6 +3,7 @@ description: Crop for Flutter. Crop any widget/image in Android, iOS, Web and De
 version: 0.5.4-modified
 homepage: https://pwa.ir
 repository: https://github.com/xclud/flutter_crop
+publish_to: none
 
 
 environment:
@@ -12,6 +13,8 @@ dependencies:
   flutter:
     sdk: flutter
   vector_math: ^2.1.2
+  image:
+    git: https://github.com/brendan-duncan/image.git
 
 dev_dependencies:
   flutter_test:

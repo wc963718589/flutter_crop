@@ -1,5 +1,4 @@
 import 'dart:ui' as ui;
-import 'package:app/centered_slider_track_shape.dart';
 import 'package:flutter/material.dart';
 import 'package:crop/crop.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,7 +32,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final controller = CropController(aspectRatio: 1000 / 667.0);
-  double _rotation = 0;
   BoxShape shape = BoxShape.rectangle;
 
   void _cropImage() async {
@@ -89,7 +87,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text('Crop Demo'),
@@ -117,12 +114,6 @@ class _HomePageState extends State<HomePage> {
               padding: const EdgeInsets.all(8),
               child: Crop(
                 onChanged: (decomposition) {
-                  if (_rotation != decomposition.rotation) {
-                    setState(() {
-                      _rotation = ((decomposition.rotation + 180) % 360) - 180;
-                    });
-                  }
-
                   // print(
                   //     "Scale : ${decomposition.scale}, Rotation: ${decomposition.rotation}, translation: ${decomposition.translation}");
                 },
@@ -161,33 +152,10 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.undo),
                 tooltip: 'Undo',
                 onPressed: () {
-                  controller.rotation = 0;
                   controller.scale = 1;
                   controller.offset = Offset.zero;
-                  setState(() {
-                    _rotation = 0;
-                  });
+                  setState(() {});
                 },
-              ),
-              Expanded(
-                child: SliderTheme(
-                  data: theme.sliderTheme.copyWith(
-                    trackShape: CenteredRectangularSliderTrackShape(),
-                  ),
-                  child: Slider(
-                    divisions: 360,
-                    value: _rotation,
-                    min: -180,
-                    max: 180,
-                    label: '$_rotation°',
-                    onChanged: (n) {
-                      setState(() {
-                        _rotation = n.roundToDouble();
-                        controller.rotation = _rotation;
-                      });
-                    },
-                  ),
-                ),
               ),
               PopupMenuButton<BoxShape>(
                 icon: const Icon(Icons.crop_free),

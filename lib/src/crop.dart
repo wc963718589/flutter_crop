@@ -112,7 +112,6 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
   ///
   /// This is used to compare with the value in
   /// [ScaleUpdateDetails.pointerCount]. Check [_onScaleUpdate] for detail.
-  int _previousPointerCount = 0;
 
   late AnimationController _controller;
   late CurvedAnimation _animation;
@@ -120,7 +119,6 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
   Future<ui.Image> _crop(double pixelRatio) {
     final rrb = _repaintBoundaryKey.currentContext?.findRenderObject()
         as RenderRepaintBoundary;
-
     return rrb.toImage(pixelRatio: pixelRatio);
   }
 
@@ -146,38 +144,22 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
   }
 
   void _reCenterImage([bool animate = true]) {
-    final sz = _key.currentContext!.size!;
-    final s = widget.controller._scale;
+    final widgetSize = _key.currentContext!.size!;
     final childBox =
         (_childKey.currentContext?.findRenderObject() as RenderBox);
     final childXform = childBox.getTransformTo(null);
-    final viewScale = childXform.row0[0] / s;
-    final childWidgetSize = Rect.fromLTWH(
-        0,
-        0,
-        childBox.paintBounds.width * viewScale,
-        childBox.paintBounds.height * viewScale);
+    final viewScale = childXform.row0[0];
+    final imageDimensions = childBox.paintBounds;
+    final imageScreenSize = Size(
+        imageDimensions.width * viewScale, imageDimensions.height * viewScale);
 
-    final canvas =
-        Rect.fromLTWH(0, 0, childWidgetSize.width, childWidgetSize.height);
-    final imageBoundaries = Rect.fromCenter(
-        center: widget.controller._offset + canvas.center,
-        width: childWidgetSize.width * s,
-        height: childWidgetSize.height * s);
-
-    var clampBoundaries = Rect.fromCenter(
-        center: Offset.zero,
-        width: ((imageBoundaries.width - sz.width).abs().floorToDouble()),
-        height: (imageBoundaries.height - sz.height).abs().floorToDouble());
-
-    final clampedOffset = Offset(
-        widget.controller._offset.dx
-            .clamp(clampBoundaries.left, clampBoundaries.right),
-        widget.controller._offset.dy
-            .clamp(clampBoundaries.top, clampBoundaries.bottom));
+    final maxDx = max(0.0, imageScreenSize.width - widgetSize.width) / 2;
+    final maxDy = max(0.0, imageScreenSize.height - widgetSize.height) / 2;
 
     _startOffset = widget.controller._offset;
-    widget.controller._offset = _endOffset = clampedOffset;
+    widget.controller._offset = _endOffset = Offset(
+        _startOffset.dx.clamp(-maxDx, maxDx),
+        _startOffset.dy.clamp(-maxDy, maxDy));
 
     if (animate) {
       if (_controller.isCompleted || _controller.isAnimating) {
@@ -282,7 +264,6 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
       onScaleUpdate: _onScaleUpdate,
       onScaleEnd: (details) {
         widget.controller._scale = max(widget.controller._scale, 1);
-        _previousPointerCount = 0;
         _reCenterImage();
       },
     );
