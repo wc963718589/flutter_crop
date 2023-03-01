@@ -1,19 +1,16 @@
 part of crop;
 
-/// The controller used to control the rotation, scale and actual cropping.
+/// The controller used to control the scale and offset.
 class CropController extends ChangeNotifier {
   /// Constructor
   CropController({
     double aspectRatio = 1.0,
     double scale = 1.0,
-    double rotation = 0,
   }) {
     _aspectRatio = aspectRatio;
     _scale = scale;
-    _rotation = rotation;
   }
   double _aspectRatio = 1;
-  double _rotation = 0;
   double _scale = 1;
   Offset _offset = Offset.zero;
   Future<ui.Image> Function(double pixelRatio)? _cropCallback;
@@ -36,15 +33,6 @@ class CropController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Gets the current rotation.
-  double get rotation => _rotation;
-
-  /// Sets the desired rotation.
-  set rotation(double value) {
-    _rotation = value;
-    notifyListeners();
-  }
-
   /// Gets the current offset.
   Offset get offset => _offset;
 
@@ -57,23 +45,7 @@ class CropController extends ChangeNotifier {
   /// Gets the transformation matrix.
   Matrix4 get transform => Matrix4.identity()
     ..translate(_offset.dx, _offset.dy, 0)
-    ..rotateZ(_rotation)
     ..scale(_scale, _scale, 1);
-
-  double _getMinScale() {
-    final r = vm.radians(_rotation % 360);
-    final rabs = r.abs();
-
-    final sinr = sin(rabs).abs();
-    final cosr = cos(rabs).abs();
-
-    final x = cosr * _aspectRatio + sinr;
-    final y = sinr * _aspectRatio + cosr;
-
-    final m = max(x / _aspectRatio, y);
-
-    return m;
-  }
 
   /// Capture an image of the current state of this widget and its children.
   ///
