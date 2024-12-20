@@ -6,13 +6,16 @@ class CropController extends ChangeNotifier {
   CropController({
     double aspectRatio = 1.0,
     double scale = 1.0,
+    bool flip = false
   }) {
     _aspectRatio = aspectRatio;
     _scale = scale;
+    _flip = flip;
   }
   double _aspectRatio = 1;
   double _scale = 1;
   Offset _offset = Offset.zero;
+  bool _flip = false;
   Future<ui.Image> Function(double pixelRatio)? _cropCallback;
 
   /// Gets the current aspect ratio.
@@ -33,6 +36,21 @@ class CropController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Gets the current flip.
+  bool get flip => _flip;
+
+  /// Sets the flip
+  set flip(bool value) {
+    _flip = value;
+    notifyListeners();
+  }
+
+  /// toggle flip
+  void toggleFlip() {
+    _flip = !_flip;
+    notifyListeners();
+  }
+
   /// Gets the current offset.
   Offset get offset => _offset;
 
@@ -44,7 +62,8 @@ class CropController extends ChangeNotifier {
 
   /// Gets the transformation matrix.
   Matrix4 get transform => Matrix4.identity()
-    ..translate(_offset.dx, _offset.dy, 0)
+    ..rotateY(_flip ? pi : 0)
+    ..translate(_flip ? -_offset.dx : _offset.dx, _offset.dy, 0)
     ..scale(_scale, _scale, 1);
 
   /// Capture an image of the current state of this widget and its children.

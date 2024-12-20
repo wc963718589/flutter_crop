@@ -151,16 +151,16 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
     final viewScale = childXform.row0[0];
     final imageDimensions = childBox.paintBounds;
     final imageScreenSize = Size(
-        imageDimensions.width * viewScale, imageDimensions.height * viewScale);
+        (imageDimensions.width * viewScale).abs(), (imageDimensions.height * viewScale).abs());
 
     final maxDx = max(0.0, imageScreenSize.width - widgetSize.width) / 2;
     final maxDy = max(0.0, imageScreenSize.height - widgetSize.height) / 2;
-
+    print('aaa $imageScreenSize $widgetSize');
     _startOffset = widget.controller._offset;
     widget.controller._offset = _endOffset = Offset(
         _startOffset.dx.clamp(-maxDx, maxDx),
         _startOffset.dy.clamp(-maxDy, maxDy));
-
+    print('aaa ${widget.controller._offset} $maxDx $maxDy');
     if (animate) {
       if (_controller.isCompleted || _controller.isAnimating) {
         _controller.reset();
@@ -199,6 +199,7 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     final s = widget.controller._scale;
+    final f = widget.controller._flip;
     final o = Offset.lerp(_startOffset, _endOffset, _animation.value)!;
 
     Widget buildInnerCanvas() {
@@ -207,7 +208,8 @@ class _CropState extends State<Crop> with TickerProviderStateMixin {
         child: Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()
-            ..translate(o.dx, o.dy, 0)
+            ..rotateY(f ? pi : 0)
+            ..translate(f ? -o.dx : o.dx, o.dy, 0)
             ..scale(s, s, 1),
           child: FittedBox(
             fit: BoxFit.cover,
